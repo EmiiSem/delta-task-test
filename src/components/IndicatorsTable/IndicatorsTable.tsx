@@ -1,6 +1,6 @@
-import type { IndicatorRow } from '../../types/indicators'
-import { formatNumber, formatChangePercent } from '../../utils/format'
-import styles from './IndicatorsTable.module.scss'
+import type { IndicatorRow } from '../../types/indicators';
+import { formatNumber, formatChangePercent } from '../../utils/format';
+import styles from './IndicatorsTable.module.scss';
 
 interface IndicatorsTableProps {
   rows: IndicatorRow[],
@@ -22,9 +22,33 @@ export function IndicatorsTable({ rows, selectedId, onSelectRow }: IndicatorsTab
         </thead>
         <tbody>
           {rows.map((row, index) => {
-            const { text: percentText, variant: percentVariant } = formatChangePercent(row.changePercent)
-            const isAlt = index % 2 === 1
-            const isSelected = selectedId === row.id
+            const yesterdayChange = formatChangePercent(row.changePercent);
+
+            // Расчёт процента изменения по сравнению с тем же днем недели
+            const sameDayOfWeekChangeValue = row.sameDayOfWeek !== 0 
+              ? ((row.currentDay - row.sameDayOfWeek) / Math.abs(row.sameDayOfWeek)) * 100 
+              : 0;
+            const sameDayOfWeekChange = formatChangePercent(sameDayOfWeekChangeValue);
+
+            const isAlt = index % 2 === 1;
+            const isSelected = selectedId === row.id;
+
+            // Определение класса для фона ячейки "Вчера"
+            let yesterdayBgClass = '';
+            if (yesterdayChange.variant === 'positive') {
+              yesterdayBgClass = styles.positiveBg;
+            } else if (yesterdayChange.variant === 'negative') {
+              yesterdayBgClass = styles.negativeBg;
+            }
+
+            // Определение класса для фона ячейки "Этот день недели"
+            let sameDayOfWeekBgClass = '';
+            if (sameDayOfWeekChange.variant === 'positive') {
+              sameDayOfWeekBgClass = styles.positiveBg;
+            } else if (sameDayOfWeekChange.variant === 'negative') {
+              sameDayOfWeekBgClass = styles.negativeBg;
+            }
+
             return (
               <tr
                 key={row.id}
@@ -32,19 +56,25 @@ export function IndicatorsTable({ rows, selectedId, onSelectRow }: IndicatorsTab
                 onClick={() => onSelectRow(row)}
               >
                 <td className={styles.indicator}>{row.name}</td>
-                <td className={`${styles.value} ${isAlt ? styles.rowAlt : ''}`}>{formatNumber(row.currentDay)}</td>
                 <td className={`${styles.value} ${isAlt ? styles.rowAlt : ''}`}>
+                  {formatNumber(row.currentDay)}
+                </td>
+                <td className={`${styles.value} ${isAlt ? styles.rowAlt : ''} ${yesterdayBgClass}`}>
                   <span className={styles.yesterdayCell}>
                     {formatNumber(row.yesterday)}
-                    <span className={`${styles.percent} ${styles[percentVariant]}`}>{percentText}</span>
+                    <span className={`${styles.percent} ${styles[yesterdayChange.variant]}`}>
+                      {yesterdayChange.text}
+                    </span>
                   </span>
                 </td>
-                <td className={`${styles.value} ${isAlt ? styles.rowAlt : ''}`}>{formatNumber(row.sameDayOfWeek)}</td>
+                <td className={`${styles.value} ${isAlt ? styles.rowAlt : ''} ${sameDayOfWeekBgClass}`}>
+                  {formatNumber(row.sameDayOfWeek)}
+                </td>
               </tr>
-            )
+            );
           })}
         </tbody>
       </table>
     </div>
-  )
+  );
 }
