@@ -35,6 +35,19 @@ npm run preview # просмотр собранного приложения
 npm run lint    # ESLint
 ```
 
+## Деплой на GitHub Pages
+
+Сайт доступен по адресу: **https://emiisem.github.io/delta-task-test/**
+
+Чтобы выложить обновлённую версию:
+
+```bash
+npm install
+npm run deploy
+```
+
+Скрипт соберёт проект и отправит папку `dist` в ветку `gh-pages`. После пуша страница обновится через 1–2 минуты.
+
 ## Структура проекта
 
 ```
