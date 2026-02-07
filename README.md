@@ -1,73 +1,55 @@
-# React + TypeScript + Vite
+# Показатели — дашборд
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-приложение с таблицей финансовых показателей и графиком по выбранной строке.
 
-Currently, two official plugins are available:
+## Стек
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** + **TypeScript**
+- **Vite** — сборка и dev-сервер
+- **SCSS** — стили (модули)
+- **Recharts** — линейный график
 
-## React Compiler
+## Что делает приложение
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Показывает таблицу показателей с колонками: **Показатель**, **Текущий день**, **Вчера**, **Этот день недели**.
+- В колонке «Вчера» отображается процент изменения (зелёный / красный / чёрный).
+- По клику на строку под таблицей появляется график с данными по этому показателю за последние дни.
+- Подписи графика и тултип на русском, значения с разделителем тысяч (пробел).
 
-## Expanding the ESLint configuration
+Данные пока берутся из мока (`src/data/mockIndicators.ts`). Для подключения бэкенда достаточно заменить источник данных в `App.tsx`.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Запуск
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Откройте в браузере адрес, который выведет Vite (обычно http://localhost:5173).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Сборка и проверки
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build   # сборка в dist/
+npm run preview # просмотр собранного приложения
+npm run lint    # ESLint
+```
+
+## Структура проекта
+
+```
+src/
+├── components/
+│   ├── IndicatorsTable/   # таблица показателей
+│   └── IndicatorChart/    # график (Recharts)
+├── data/
+│   └── mockIndicators.ts  # моковые данные таблицы и истории для графика
+├── types/
+│   └── indicators.ts      # типы (строка таблицы, история)
+├── utils/
+│   └── format.ts          # форматирование чисел и процентов
+├── App.tsx
+├── App.module.scss
+├── main.tsx
+└── index.css
 ```
